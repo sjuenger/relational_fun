@@ -1,5 +1,11 @@
 from copy import deepcopy
 
+
+# TODO: Add functionality to perform a synthesis algorithm
+# TODO: ...              to perform a decomposition algorithm
+# TODO: ...              to check for applying normal forms
+
+
 def compute_attribute_shell(subset, fd_list):
     result = subset[:]
     changed = True
@@ -90,6 +96,8 @@ def main():
 
     tmp = compute_canonical_coverage(fd_list)
     # tmp = compute_attribute_shell(['A'], fd_list)
+
+    # TODO: Add a method to pretty print the func. dependencies.
     print(tmp)
 
 

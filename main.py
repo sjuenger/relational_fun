@@ -1,5 +1,7 @@
+from copy import deepcopy
+
 def compute_attribute_shell(subset, fd_list):
-    result = subset
+    result = subset[:]
     changed = True
     while changed:
         changed = False
@@ -16,21 +18,28 @@ def compute_attribute_shell(subset, fd_list):
 def compute_canonical_coverage(fd_list):
     print(fd_list)
     # Linksreduktion
-    for elem in fd_list:
+    for i in range(len(fd_list)):
+        elem = fd_list[i]
         if len(elem[0])>1:
             for attribute in elem[0]:
                 new_alpha = [item for item in elem[0] if item not in attribute]
                 tmp = compute_attribute_shell(new_alpha, fd_list)
-                new_alpha = [item for item in elem[0] if item not in attribute]
-                # Don't ask me why, but new_alpha is altered through compute_attribute(). :)
                 if all(x in tmp for x in elem[1]):
-                    fd_list.remove(elem)
-                    fd_list.append([new_alpha,elem[1]])
+                    fd_list[i][0] = new_alpha
                     elem[0] = new_alpha
-
+    print(fd_list)
 
     # Rechtsreduktion
-    # TODO
+    for i in range(len(fd_list)):
+        elem = fd_list[i]
+        for attribute in elem[1]:
+            new_fd = deepcopy(fd_list)
+            new_fd[i][1] = [item for item in elem[1] if item not in attribute]
+            tmp = compute_attribute_shell(elem[0], new_fd)
+            if attribute in tmp:
+                fd_list[i][1] = new_fd[i][1]
+                elem[1] = new_fd[i][1]
+
     # Entfernen
     # TODO
     # Zusammenfassen

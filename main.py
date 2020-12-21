@@ -16,8 +16,7 @@ def compute_attribute_shell(subset, fd_list):
 
 
 def compute_canonical_coverage(fd_list):
-    print(fd_list)
-    # Linksreduktion
+    # left side reduction
     for i in range(len(fd_list)):
         elem = fd_list[i]
         if len(elem[0])>1:
@@ -27,9 +26,8 @@ def compute_canonical_coverage(fd_list):
                 if all(x in tmp for x in elem[1]):
                     fd_list[i][0] = new_alpha
                     elem[0] = new_alpha
-    print(fd_list)
 
-    # Rechtsreduktion
+    # right side reduction
     for i in range(len(fd_list)):
         elem = fd_list[i]
         for attribute in elem[1]:
@@ -40,12 +38,21 @@ def compute_canonical_coverage(fd_list):
                 fd_list[i][1] = new_fd[i][1]
                 elem[1] = new_fd[i][1]
 
-    # Entfernen
-    # TODO
-    # Zusammenfassen
-    # TODO
+    # remove empty betas
+    for elem in fd_list:
+        if not elem[1]:
+            fd_list.remove(elem)
+
+    # sum up equal alphas
+    for elem_1 in fd_list:
+        for elem_2 in fd_list:
+            if (elem_1[0] == elem_2[0]) & (elem_1[1] != elem_2[1]):
+                fd_list.remove(elem_1)
+                fd_list.remove(elem_2)
+                fd_list.append([elem_1[0], elem_1[1]+elem_2[1]])
 
     return fd_list
+
 
 def extract_char(schema):
     s_start = schema.find('{')
@@ -53,6 +60,7 @@ def extract_char(schema):
     attributes = schema[s_start + 1:s_end].split(', ')
 
     return attributes
+
 
 def main():
     with open('input.txt', 'r') as data:
